@@ -1,0 +1,14 @@
+spring:
+  application:
+    name: azure-storage
+
+cloud:
+  azure:
+    storage:
+      protocol: http
+      account: devstoreaccount1
+      key: Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==
+      blob:
+        url: 127.0.0.1:10000/devstoreaccount1
+      table:
+        url: 127.0.0.1:10002/devstoreaccount1
