@@ -1,0 +1,80 @@
+
+buildscript {
+    ext {
+        springBootVersion = '2.0.0.RELEASE'
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+        //classpath('gradle.plugin.com.palantir.gradle.docker:gradle-docker:0.17.2')
+        classpath('org.unbroken-dome.gradle-plugins:gradle-testsets-plugin:1.4.3')
+        classpath("io.spring.gradle:dependency-management-plugin:1.0.3.RELEASE")
+    }
+}
+
+plugins {
+    id "org.sonarqube" version "2.6.1"
+    id "com.jfrog.artifactory" version "4.6.2"
+}
+
+apply plugin: 'java'
+apply plugin: 'groovy'
+apply plugin: 'idea'
+apply plugin: 'jacoco'
+apply plugin: 'org.springframework.boot'
+apply plugin: 'io.spring.dependency-management'
+apply plugin: 'org.unbroken-dome.test-sets'
+
+group = 'azure.storage'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = 9
+
+repositories {
+    mavenCentral()
+    maven { url 'https://jitpack.io' }
+    mavenLocal()
+}
+
+testSets {
+    integrationTest { dirName = 'integration-test' }
+}
+
+configurations.all {
+    exclude group: 'org.springframework.boot', module: 'spring-boot-starter-logging'
+    exclude group: 'org.slf4j', module: 'slf4j-simple'
+}
+
+dependencies {
+    ext {
+        spockVersion = '1.1-groovy-2.4'
+        springSecurityVersion = '5.0.1.RELEASE'
+    }
+
+    def withoutDefaultLogging = { exclude group: 'org.springframework.boot', module: 'spring-boot-starter-logging' }
+    compile('org.springframework.boot:spring-boot-starter', withoutDefaultLogging)
+    compile('org.springframework.boot:spring-boot-starter-web')
+
+    //azure
+    compile('com.microsoft.azure:azure-storage:7.0.0')
+
+    //code generators
+    compileOnly('org.projectlombok:lombok:1.16.20')
+
+    //logging
+    compile("org.springframework.boot:spring-boot-starter-log4j2:${springBootVersion}")
+
+    //utils
+    compile('org.apache.commons:commons-io:1.3.2')
+    compile('com.fasterxml.jackson.module:jackson-module-parameter-names')
+    compile('com.fasterxml.jackson.datatype:jackson-datatype-jsr310')
+    compile('org.apache.commons:commons-lang3:3.7')
+    compile('commons-validator:commons-validator:1.6')
+
+    //test
+    testCompile('com.github.testcontainers:testcontainers-spock:673320b695')
+    testCompile('org.codehaus.groovy:groovy-all:2.4.10')
+    testCompile('org.springframework.boot:spring-boot-starter-test')
+    testCompile("org.spockframework:spock-core:${spockVersion}")
+    testCompile("org.spockframework:spock-spring:${spockVersion}")
+
+    compile 'com.microsoft.azure:azure:1.8.0'
+}
